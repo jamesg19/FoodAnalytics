@@ -1,5 +1,72 @@
 ---
 title: "Proyecto"
+author: 
+  - "James Osmin Gramajo Carcamo"
+  - "Willy Ardiano"
 output: html_notebook
 ---
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+# Leer los archivos CSV y asignarlos sus respectivas variables
+cities <- read_csv("./Dataset/cities.csv")
+meal_types <- read_csv("./Dataset/meal_types.csv")
+meals <- read_csv("./Dataset/meals.csv")
+members <- read_csv("./Dataset/members.csv")
+monthly_member_totals <- read_csv("./Dataset/monthly_member_totals.csv")
+order_details <- read_csv("./Dataset/order_details.csv")
+orders <- read_csv("./Dataset/orders.csv")
+restaurant_types <- read_csv("./Dataset/restaurant_types.csv")
+restaurants <- read_csv("./Dataset/restaurants.csv")
+serve_types <- read_csv("./Dataset/serve_types.csv")
+
+print(cities)
+print(meal_types)
+print(meals)
+print(members)
+print(monthly_member_totals)
+print(order_details)
+print(orders)
+print(restaurant_types)
+print(restaurants)
+print(serve_types)
+
+
+```
+
+```{r}
+head(cities)
+str(cities)
+
+head(meal_types)
+str(meal_types)
+
+head(meals)
+str(meals)
+
+head(members)
+str(members)
+
+head(monthly_member_totals)
+str(monthly_member_totals)
+
+head(order_details)
+str(order_details)
+
+head(orders)
+str(orders)
+
+head(restaurant_types)
+str(restaurant_types)
+
+head(restaurants)
+str(restaurants)
+
+head(serve_types)
+str(serve_types)
+```
+
 
