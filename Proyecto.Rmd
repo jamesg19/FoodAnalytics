@@ -6,6 +6,7 @@ author:
 output: html_notebook
 ---
 
+1 CONOCIENDO LOS DATOS
 ```{r}
 # 1.1
 library(tidyverse)
@@ -75,7 +76,7 @@ str(serve_types)
 ```
 
 
-TRANSFORMANDO LOS DATOS
+2 TRANSFORMANDO LOS DATOS
 ```{r}
 # 2.1
 members$sex <- factor(members$sex)
@@ -93,9 +94,22 @@ levels(monthly_member_totals$sex) <- c("Femenino", "Masculino")
 monthly_member_totals$month <- factor(monthly_member_totals$month)
 levels(monthly_member_totals$month) <- c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio")
 
-monthly_member_totals %>%
+monthly_member_totals <- monthly_member_totals %>%
         mutate(order_ratio = order_count * meals_count)
 
 # 2.4
 print(monthly_member_totals)
+```
+
+3 COMPORTAMIENTO DE LOS DATOS
+
+Evaluando tendencias linealies
+```{r}
+library(ggplot2)
+
+# 3.1
+ggplot(monthly_member_totals, aes(x = month, y = order_ratio)) + geom_line()
+
+# 3.2
+ggplot(monthly_member_totals, aes(x = month, y = order_ratio, color = month)) + geom_line()
 ```
