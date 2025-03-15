@@ -75,3 +75,23 @@ str(serve_types)
 ```
 
 
+TRANSFORMANDO LOS DATOS
+```{r}
+# 2.1
+members$sex <- factor(members$sex)
+levels(members$sex) <- c("Femenino", "Masculino")
+print(members)
+
+# 2.2
+meals$hot_cold <- factor(meals$hot_cold, levels = c("Cold", "Hot"), ordered = TRUE)
+print(meals$hot_cold[1] < meals$hot_cold[2])
+
+# 2.3
+monthly_member_totals$sex <- factor(monthly_member_totals$sex)
+levels(monthly_member_totals$sex) <- c("Femenino", "Masculino")
+
+monthly_member_totals$month <- factor(monthly_member_totals$month)
+levels(monthly_member_totals$month) <- c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio")
+
+
+```
