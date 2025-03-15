@@ -93,5 +93,9 @@ levels(monthly_member_totals$sex) <- c("Femenino", "Masculino")
 monthly_member_totals$month <- factor(monthly_member_totals$month)
 levels(monthly_member_totals$month) <- c("Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio")
 
+monthly_member_totals %>%
+        mutate(order_ratio = order_count * meals_count)
 
+# 2.4
+print(monthly_member_totals)
 ```
