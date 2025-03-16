@@ -7,6 +7,7 @@ output: html_notebook
 ---
 
 1 CONOCIENDO LOS DATOS
+
 ```{r}
 # 1.1
 library(tidyverse)
@@ -75,8 +76,8 @@ head(serve_types)
 str(serve_types)
 ```
 
-
 2 TRANSFORMANDO LOS DATOS
+
 ```{r}
 # 2.1
 members$sex <- factor(members$sex)
@@ -104,6 +105,7 @@ print(monthly_member_totals)
 3 COMPORTAMIENTO DE LOS DATOS
 
 Evaluando tendencias linealies
+
 ```{r}
 library(ggplot2)
 
@@ -112,4 +114,31 @@ ggplot(monthly_member_totals, aes(x = month, y = order_ratio)) + geom_line()
 
 # 3.2
 ggplot(monthly_member_totals, aes(x = month, y = order_ratio, color = month)) + geom_line()
+```
+
+Relación, selección y ordenamiento de datos
+
+```{r}
+options(tibble.print_max = Inf, tibble.print_min = Inf)  # Muestra todas las filas
+# 3.3 USar Cities, members, orders, restaurants
+
+# 3.4
+data_merge <- orders %>%
+  inner_join(members, by = c("member_id" = "id")) %>%
+  inner_join(cities, by = c("city_id" = "id")) %>%
+  inner_join(restaurants, by = c("restaurant_id" = "id"), suffix = c("_MEMBER", "_RESTAURANT"))  %>%
+  inner_join(cities, by = c("city_id_RESTAURANT" = "id"), suffix = c("_MEMBER", "_RESTAURANT"))
+
+# 3.5 
+select_data <- data_merge %>%
+  select(
+    first_name, surname, sex, email, city_MEMBER,
+    date, hour, total_order, restaurant_name, city_RESTAURANT
+ )
+
+# 3.6
+sorted_data <- select_data %>%
+  arrange(total_order)
+# 3.7
+print(sorted_data) #write_csv(sorted_data, "datos_ordenados.csv")
 ```
