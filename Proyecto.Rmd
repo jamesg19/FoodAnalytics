@@ -116,7 +116,7 @@ ggplot(monthly_member_totals, aes(x = month, y = order_ratio)) + geom_line()
 ggplot(monthly_member_totals, aes(x = month, y = order_ratio, color = month)) + geom_line()
 ```
 
-Relación, selección y ordenamiento de datos
+Relación, selección y ordenamiento de datos 3.3-3.7
 
 ```{r}
 options(tibble.print_max = Inf, tibble.print_min = Inf)  # Muestra todas las filas
@@ -142,3 +142,11 @@ sorted_data <- select_data %>%
 # 3.7
 print(sorted_data) #write_csv(sorted_data, "datos_ordenados.csv")
 ```
+
+
+
+Tendencias de comida por restaurante y ubicación (ciudad) 3.21-3.28
+```{r}
+
+```
+
