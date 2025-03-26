@@ -164,3 +164,20 @@ count_by_meal_type <- meals_info_selected %>%
 # 3.12
 print(count_by_meal_type)
 ```
+
+Comportamiento de ingresos por ciudad
+```{r}
+# 3.13
+sum_income_persentaje <- meals_info_selected %>%
+        group_by(city) %>%
+        summarize(sumIncomePersentaje = sum(income_persentage))
+
+# 3.14
+print(sum_income_persentaje)
+
+# 3.15
+ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje)) + geom_col()
+
+# 3.16
+ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje, fill = city)) + geom_col()
+```
