@@ -152,4 +152,15 @@ meals_info <- meals %>%
         inner_join(restaurants, by = c("restaurant_id" = "id")) %>%
         inner_join(cities, by = c("city_id" = "id")) %>%
         inner_join(restaurant_types, by = c("restaurant_type_id" = "id"))
+
+# 3.10
+meals_info_selected <- meals_info %>%
+        select(restaurant_name, city, restaurant_type, income_persentage, serve_type, meal_type, meal_name, price)
+
+# 3.11
+count_by_meal_type <- meals_info_selected %>%
+        count(meal_type)
+
+# 3.12
+print(count_by_meal_type)
 ```
