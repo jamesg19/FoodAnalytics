@@ -142,3 +142,14 @@ sorted_data <- select_data %>%
 # 3.7
 print(sorted_data) #write_csv(sorted_data, "datos_ordenados.csv")
 ```
+
+Obteniendo el conteo por tipo de comida
+```{r}
+# 3.9
+meals_info <- meals %>%
+        inner_join(serve_types, by = c("serve_type_id" = "id")) %>%
+        inner_join(meal_types, by = c("meal_type_id" = "id")) %>%
+        inner_join(restaurants, by = c("restaurant_id" = "id")) %>%
+        inner_join(cities, by = c("city_id" = "id")) %>%
+        inner_join(restaurant_types, by = c("restaurant_type_id" = "id"))
+```
