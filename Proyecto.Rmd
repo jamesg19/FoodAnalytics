@@ -181,3 +181,16 @@ ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje)) + geom_col
 # 3.16
 ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje, fill = city)) + geom_col()
 ```
+
+Conociendo la tendencia de consumo en un restaurante en particular
+```{r}
+# 3.17 y 3.18
+meals_info_filtered <- meals_info_selected %>%
+        filter(meal_type == "Vegan" | meal_type == "Chicken", restaurant_name == "Restaurant 2", price > 30)
+
+# 3.19
+ggplot(meals_info_filtered, aes(x = serve_type, y = price)) + geom_col()
+
+# 3.20
+ggplot(meals_info_filtered, aes(x = serve_type, y = price, fill = serve_type)) + geom_col() + labs(x = "Tipo de plato", y = "Precio", title = "Grafica de comparacion", subtitle = "Tipo de plato VS Precio")
+```
