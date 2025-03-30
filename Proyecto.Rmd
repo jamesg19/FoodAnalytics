@@ -6,7 +6,7 @@ author:
 output: html_notebook
 ---
 
-1 CONOCIENDO LOS DATOS
+1 CONOCIENDO LOS DATOS (1.1 - 1.4)
 
 ```{r}
 # 1.1
@@ -14,7 +14,7 @@ library(tidyverse)
 library(dplyr)
 library(ggplot2)
 
-# 1.2
+# 1.2 Lectura de archivos .csv y almacenar en variables
 cities <- read_csv("./Dataset/cities.csv")
 meal_types <- read_csv("./Dataset/meal_types.csv")
 meals <- read_csv("./Dataset/meals.csv")
@@ -26,7 +26,7 @@ restaurant_types <- read_csv("./Dataset/restaurant_types.csv")
 restaurants <- read_csv("./Dataset/restaurants.csv")
 serve_types <- read_csv("./Dataset/serve_types.csv")
 
-#1.3
+#1.3 Imprimir el contenido de la variable
 print(cities)
 print(meal_types)
 print(meals)
@@ -43,8 +43,7 @@ print(serve_types)
 
 ```{r}
 
-# 1.4
-
+# 1.4 usar head() y str() para cada variable
 head(cities)
 str(cities)
 
@@ -76,19 +75,20 @@ head(serve_types)
 str(serve_types)
 ```
 
-2 TRANSFORMANDO LOS DATOS
+2 TRANSFORMANDO LOS DATOS (2.1 - 2.4)
 
 ```{r}
-# 2.1
+# 2.1 Transformar la columna sex a un factor y renombre los niveles "F" y "M" por "Femenino" y "Masculino".
 members$sex <- factor(members$sex)
 levels(members$sex) <- c("Femenino", "Masculino")
 print(members)
 
-# 2.2
+# 2.2 Transformar la columna hot_cold a un factor y aplique un ordenamiento donde "cold" es menor que "hot". 
 meals$hot_cold <- factor(meals$hot_cold, levels = c("Cold", "Hot"), ordered = TRUE)
-print(meals$hot_cold[1] < meals$hot_cold[2])
+print(meals$hot_cold[1] < meals$hot_cold[2]) # Imprime TRUE imdica que COLD  es menor que HOT
 
-# 2.3
+# 2.3 Transforme la columna sex a un factor y renombre los niveles "F" y "M" por "Femenino" y "Masculino", haga lo 
+#mismo con la columna month y renombre los niveles "1", "2", "3", "4" y "5" por "Enero", "Febrero", "Marzo", "Abril" y "Mayo"
 monthly_member_totals$sex <- factor(monthly_member_totals$sex)
 levels(monthly_member_totals$sex) <- c("Femenino", "Masculino")
 
@@ -98,56 +98,106 @@ levels(monthly_member_totals$month) <- c("Enero", "Febrero", "Marzo", "Abril", "
 monthly_member_totals <- monthly_member_totals %>%
         mutate(order_ratio = order_count * meals_count)
 
-# 2.4
+# 2.4 imprimir
 print(monthly_member_totals)
 ```
 
 3 COMPORTAMIENTO DE LOS DATOS
 
-Evaluando tendencias linealies
-
+Evaluando tendencias linealies (3.1 - 3.2)
 ```{r}
 library(ggplot2)
 
-# 3.1
+# 3.1 3.1 Utilice ggplot para hacer una gráfica lineal. Tome de referencia la variable creada en el inciso 2.3 (eje y) versus la variable month (eje x).
 ggplot(monthly_member_totals, aes(x = month, y = order_ratio)) + geom_line()
 
-# 3.2
+# 3.2 Utilice la variable month para definir un color distinto en la estética de la gráfica.
 ggplot(monthly_member_totals, aes(x = month, y = order_ratio, color = month)) + geom_line()
 ```
 
-Relación, selección y ordenamiento de datos 3.3-3.7
+Relación, selección y ordenamiento de datos (3.3-3.7)
 
 ```{r}
 options(tibble.print_max = Inf, tibble.print_min = Inf)  # Muestra todas las filas
 # 3.3 USar Cities, members, orders, restaurants
 
-# 3.4
+# 3.4 Utilice la función inner-join y construya las relaciones 
 data_merge <- orders %>%
   inner_join(members, by = c("member_id" = "id")) %>%
   inner_join(cities, by = c("city_id" = "id")) %>%
   inner_join(restaurants, by = c("restaurant_id" = "id"), suffix = c("_MEMBER", "_RESTAURANT"))  %>%
   inner_join(cities, by = c("city_id_RESTAURANT" = "id"), suffix = c("_MEMBER", "_RESTAURANT"))
 
-# 3.5 
+# 3.5 Use la función select en la variable creada anteriormente 
 select_data <- data_merge %>%
   select(
     first_name, surname, sex, email, city_MEMBER,
     date, hour, total_order, restaurant_name, city_RESTAURANT
  )
 
-# 3.6
+# 3.6 Cree un ordenamiento ascendente para el campo total_order
 sorted_data <- select_data %>%
   arrange(total_order)
-# 3.7
+# 3.7 Imprimir resultadp
 print(sorted_data) #write_csv(sorted_data, "datos_ordenados.csv")
 ```
 
 
-
-Tendencias de comida por restaurante y ubicación (ciudad) 3.21-3.28
+Obteniendo el conteo por tipo de comida (3.8 -3.12)
 ```{r}
-# 3.22
+#3.8
+#3.9 Utilice la función inner-join y construya las relaciones correspondientes, agregue sufijos
+meals_info <- meals %>%
+        inner_join(serve_types, by = c("serve_type_id" = "id")) %>%
+        inner_join(meal_types, by = c("meal_type_id" = "id")) %>%
+        inner_join(restaurants, by = c("restaurant_id" = "id")) %>%
+        inner_join(cities, by = c("city_id" = "id")) %>%
+        inner_join(restaurant_types, by = c("restaurant_type_id" = "id"))
+# 3.10 Use la función select en la variable creada anteriormente 
+meals_info_selected <- meals_info %>%
+        select(restaurant_name, city, restaurant_type, income_persentage, serve_type, meal_type, meal_name, price)
+
+# 3.11 Use la función count en la variable creada para el conteo de 'meal_type'
+count_by_meal_type <- meals_info_selected %>%
+        count(meal_type)
+
+# 3.12 Imprimir resultado
+print(count_by_meal_type)
+```
+
+Comportamiento de ingresos por ciudad (3.13 - 3.16)
+```{r}
+# 3.13 Use la función group_by en 'city' luego summarize en 'income_persentage'
+sum_income_persentaje <- meals_info_selected %>%
+        group_by(city) %>%
+        summarize(sumIncomePersentaje = sum(income_persentage))
+
+# 3.14 imprimir resultado
+print(sum_income_persentaje)
+
+# 3.15 Grafico de barre 'city' en Eje X y 'sumIncomePersentaje' en Eje Y
+ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje)) + geom_col()
+
+# 3.16 Utilice la variable city para definir un colro
+ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje, fill = city)) + geom_col()
+```
+
+Conociendo la tendencia de consumo en un restaurante en particular (3.17 - 3.20)
+```{r}
+# 3.17 y 3.18 Use la función filter 
+meals_info_filtered <- meals_info_selected %>%
+        filter(meal_type == "Vegan" | meal_type == "Chicken", restaurant_name == "Restaurant 2", price > 30)
+
+# 3.19  Construir un gráfico de barras, use serve_type para el eje x y price para el eje y. 
+ggplot(meals_info_filtered, aes(x = serve_type, y = price)) + geom_col()
+
+# 3.20 Utilizar la función 'labs' para agregar un título, un subtítulo y etiquetas al eje x y y
+ggplot(meals_info_filtered, aes(x = serve_type, y = price, fill = serve_type)) + geom_col() + labs(x = "Tipo de plato", y = "Precio", title = "Grafica de comparacion", subtitle = "Tipo de plato VS Precio")
+```
+
+Tendencias de comida por restaurante y ubicación(ciudad) (3.21-3.28)
+```{r}
+# 3.22 Utilice la función inner-join y construya las relaciones correspondientes,
 data_join_3_22 <- orders %>%
   inner_join(order_details, by = c("id" = "order_id"),suffix = c("", "_ORDER_DETAIL")) %>%
   inner_join(meals, by = c("meal_id" = "id"),suffix = c("_ORDERS", "_MEALS")) %>%
@@ -157,25 +207,23 @@ data_join_3_22 <- orders %>%
   inner_join(restaurant_types, by = c("restaurant_type_id" = "id")) %>%
   inner_join(cities, by = c("city_id" = "id"))
 #print(data_join_3_22) 
-# 3.23
- 
-
+# 3.23  Use la función select en la variable creada anteriormente para presentar los siguientes campos
 select_data_3_22 <- data_join_3_22 %>%
   select(
-    restaurant_name , city, restaurant_type, income_persentage, serve_type,
-    meal_type, meal_name, price, date, hour, total_order, id_ORDER_DETAIL
+    restaurant_name , city, restaurant_type, income_persentage, serve_type, meal_type, 
+    meal_name, price, date, hour, total_order, id_ORDER_DETAIL
  ) 
 
-# 3.24  3.25
+# 3.24  3.25  Aplique group_by para agrupar por city, restaurant_name, meal_name y luego summarise para obtener la #sumatoria de total_order y asigne la etiqueta totals
 grouped_data_3_22 <- select_data_3_22 %>%
   group_by(city, restaurant_name, meal_name) %>%
   summarise(totals = sum(total_order, na.rm = TRUE),
     .groups = "drop")
 
-# 3.26
+# 3.26 Imprimir resuotado
 print(grouped_data_3_22)
 
-# 3.27
+# 3.27 Construye una gráfica de barras restaurant_name en el eje x y totals en el eje y.
 ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
@@ -185,7 +233,7 @@ ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
     axis.text.x = element_text(angle = 90, hjust = 1, size = 10), # nombres a 90 grados
 
   )
-# 3.28 
+# 3.28 aplica faceting tomando de referencia la variable 'city'.
 ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
@@ -198,54 +246,4 @@ ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
   )
 ```
 
-Obteniendo el conteo por tipo de comida
-```{r}
-# 3.9
-meals_info <- meals %>%
-        inner_join(serve_types, by = c("serve_type_id" = "id")) %>%
-        inner_join(meal_types, by = c("meal_type_id" = "id")) %>%
-        inner_join(restaurants, by = c("restaurant_id" = "id")) %>%
-        inner_join(cities, by = c("city_id" = "id")) %>%
-        inner_join(restaurant_types, by = c("restaurant_type_id" = "id"))
 
-# 3.10
-meals_info_selected <- meals_info %>%
-        select(restaurant_name, city, restaurant_type, income_persentage, serve_type, meal_type, meal_name, price)
-
-# 3.11
-count_by_meal_type <- meals_info_selected %>%
-        count(meal_type)
-
-# 3.12
-print(count_by_meal_type)
-```
-
-Comportamiento de ingresos por ciudad
-```{r}
-# 3.13
-sum_income_persentaje <- meals_info_selected %>%
-        group_by(city) %>%
-        summarize(sumIncomePersentaje = sum(income_persentage))
-
-# 3.14
-print(sum_income_persentaje)
-
-# 3.15
-ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje)) + geom_col()
-
-# 3.16
-ggplot(sum_income_persentaje, aes(x = city, y = sumIncomePersentaje, fill = city)) + geom_col()
-```
-
-Conociendo la tendencia de consumo en un restaurante en particular
-```{r}
-# 3.17 y 3.18
-meals_info_filtered <- meals_info_selected %>%
-        filter(meal_type == "Vegan" | meal_type == "Chicken", restaurant_name == "Restaurant 2", price > 30)
-
-# 3.19
-ggplot(meals_info_filtered, aes(x = serve_type, y = price)) + geom_col()
-
-# 3.20
-ggplot(meals_info_filtered, aes(x = serve_type, y = price, fill = serve_type)) + geom_col() + labs(x = "Tipo de plato", y = "Precio", title = "Grafica de comparacion", subtitle = "Tipo de plato VS Precio")
-```
