@@ -237,7 +237,7 @@ ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
 ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
-  labs(title = "Total de órdenes por restaurante", x = "Restaurante", y = "Total de órdenes") +
+  labs(title = "Total de ordenes por restaurante", x = "Restaurante", y = "Total de ordenes") +
   scale_y_continuous(labels = scales::comma) +  # Formato de números en el eje Y
   facet_wrap(~ city, scales = "free_x") +
   theme(
@@ -246,4 +246,55 @@ ggplot(grouped_data_3_22, aes(x = restaurant_name, y = totals)) +
   )
 ```
 
+Análisis estadístico propio
+```{r}
+#3.29 Utilice la variable donde asigno el archivo "monthly_member_totals.csv" y haga un análisis estadístico propio considerando lo siguiente:
+#● Aplique las funciones filter, group_by, summarise y count para descubrir comportamientos particulares.
+#● Use un tipo de gráfica para representar comportamientos o tendencias en los datos.
+# Analisis propio: Agrupar por ciudad y calcular promedios e gastos y promedios de ordenes
+gasto_promedio_ciudad <- monthly_member_totals %>%
+  group_by(city) %>%
+  summarise(
+    promedio_gasto = mean(total_expense, na.rm = TRUE),
+    promedio_ordenes = mean(order_count, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(promedio_gasto))
+print(gasto_promedio_ciudad)
+# Grafica de Ciudad vs Gasto promedio
+ggplot(gasto_promedio_ciudad, aes(x = reorder(city, -promedio_gasto), y = promedio_gasto, fill = city)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = round(promedio_gasto, 1)), vjust = -0.3, size = 3.5) + #Muestra la etiqueta de gasto promedio
+  theme_minimal() +
+  labs(title = "Gasto promedio mensual por ciudad",
+       x = "Ciudad", y = "Gasto promedio (total_expense)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none")
 
+# Paso 2: Convertir a formato largo para graficar ambas variables
+gasto_largo <- gasto_promedio_ciudad %>%
+  pivot_longer(cols = c(promedio_gasto, promedio_ordenes),
+               names_to = "tipo", values_to = "valor")
+
+# Paso 3: Graficar barras agrupadas
+ggplot(gasto_largo, aes(x = reorder(city, -valor), y = valor, fill = tipo)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.7)) +
+  geom_text(aes(label = round(valor, 1)),
+            position = position_dodge(width = 0.7),
+            vjust = -0.3, size = 3.5) +
+  labs(title = "Promedio de gasto y ordenes promedio por ciudad",
+       x = "Ciudad", y = "Valor promedio ($)",
+       fill = "Tipo de metrica") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#Conclusión del análisis estadístico (tabla):
+#Los datos muestran que Ramat Hasharon tiene el gasto promedio mensual más alto por usuario con 783.72,
+# seguido por Ramat Gan y Tel Aviv, mientras que Herzelia tiene el promedio más bajo con 635.42.
+# Sin embargo, el número de órdenes promedio entre ciudades es bastante similar, alrededor de
+# #25.5 órdenes mensuales por usuario.
+#Esto sugiere que la diferencia en el gasto no se debe tanto a la cantidad de órdenes,
+# sino probablemente al tipo o costo de los productos o servicios adquiridos en cada ciudad.
+# Es decir, en ciudades como Ramat Hasharon, los usuarios realizan un número de órdenes
+# similar, pero gastan más por cada una.
+```
